@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	ServerPort string
+	DbString   string
 }
 
 var Envs Config
@@ -21,6 +22,7 @@ func initConfig() Config {
 
 	return Config{
 		ServerPort: getEnv("SERVER_PORT", ":8080"),
+		DbString:   getEnv("DB_STRING", ""),
 	}
 }
 
