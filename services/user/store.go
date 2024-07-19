@@ -1,6 +1,10 @@
 package user
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/ruthwik-t/ecom/types"
+)
 
 type Store struct {
 	db *sql.DB
@@ -8,4 +12,16 @@ type Store struct {
 
 func NewStore(db *sql.DB) *Store {
 	return &Store{db: db}
+}
+
+func (s *Store) GetUserByEmail(email string) (*types.User, error) {
+	return nil, nil
+}
+
+func (s *Store) GetUserByID(id int) (*types.User, error) {
+	return nil, nil
+}
+
+func (s *Store) CreateUser(user types.User) error {
+	return nil
 }
