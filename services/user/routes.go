@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator"
+	"github.com/ruthwik-t/ecom/config"
 	"github.com/ruthwik-t/ecom/services/auth"
 	"github.com/ruthwik-t/ecom/types"
 	"github.com/ruthwik-t/ecom/utils"
@@ -24,7 +25,7 @@ func (h *Handler) RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("GET /login", h.handleLogin)
 	router.HandleFunc("GET /register", h.handleRegister)
 
-	router.HandleFunc("GET /users/{userID}", h.handleGetUser)
+	router.HandleFunc("GET /users/{userID}", auth.WithJWTAuth(h.handleGetUser, h.store))
 }
 
 func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +52,14 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": ""})
+	secret := []byte(config.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, u.ID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, map[string]string{"token": token})
 
 }
 
