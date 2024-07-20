@@ -13,10 +13,10 @@ import (
 )
 
 type Handler struct {
-	store *Store
+	store types.UserStore
 }
 
-func NewHandler(store *Store) *Handler {
+func NewHandler(store types.UserStore) *Handler {
 	return &Handler{store: store}
 }
 
@@ -80,7 +80,7 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.store.CreateUser(types.User{ //error here
+	err = h.store.CreateUser(types.User{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
@@ -96,6 +96,7 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := extractUserIDFromPath(r.URL.Path)
+
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
@@ -113,7 +114,7 @@ func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
 
 func extractUserIDFromPath(path string) (int, error) {
 	segments := strings.Split(path, "/")
-	if len(segments) < 3 || segments[1] != "users" {
+	if len(segments) < 3 || segments[1] != "user" {
 		return 0, fmt.Errorf("missing user ID")
 	}
 
